@@ -1,0 +1,4 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -DCMAKE_CXX_COMPILER=c++ -G Ninja -S "/Users/micah/Desktop/UF/Freshman/Spring/COP3503C/Project 3 - Minesweeper" -B "/Users/micah/Desktop/UF/Freshman/Spring/COP3503C/Project 3 - Minesweeper/cmake-build-debug"
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/micah/Desktop/UF/Freshman/Spring/COP3503C/Project 3 - Minesweeper/cmake-build-debug
