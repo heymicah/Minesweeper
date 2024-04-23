@@ -380,6 +380,20 @@ void draw_counter(sf::RenderWindow& window, board& game_board, map<string, sf::T
     }
 }
 
+void draw_timer(sf::RenderWindow& window, map<string, sf::Texture>& textures, board& game_board, bool& playing, bool& paused, int& total_time) {
+    string time = to_string(total_time);
+    vector<char> split_timer;
+    for(int i = 0; i < time.length(); i++) {
+        split_timer.push_back(time[i]);
+    }
+    for(int i = 0; i < game_board.get_timer().size(); i++) {
+        game_board.get_timer()[i]->digit_sprite.setTexture(textures.at("digits"));
+        int position = get_number_position(split_timer[i] - '0');
+        game_board.get_timer()[i]->digit_sprite.setTextureRect(sf::IntRect(position,0,21,32));
+        window.draw(game_board.get_timer()[i]->digit_sprite);
+    }
+}
+
 void draw_buttons(sf::RenderWindow& window, map<string, sf::Texture>& textures, board& game_board, bool& win, bool& playing, bool& paused) {
     game_board.get_button_map().at("face")->button_sprite.setTexture(textures.at("face_happy"));
     if(!paused) {
@@ -444,13 +458,13 @@ void draw_current_board(sf::RenderWindow& window, map<string, sf::Texture>& text
 
 void display_game(sf::RenderWindow& window, map<string, sf::Texture>& textures, const int height, const int width, const int rows, const int cols, const int num_mines, const string& player_name, sf::Font& font) {
     window.create(sf::VideoMode(height, width), "Minesweeper", sf::Style::Close);
-    window.clear(sf::Color::White);
     bool debug_mode = false;
     bool win = false;
     bool playing = true;
     bool paused = false;
     int num_flags = 0;
     int count = 0;
+    int total_time = 0;
     sf::Clock clock;
     board game_board(rows, cols);
     int tiles_need_win = (rows * cols) - num_mines;
@@ -458,14 +472,19 @@ void display_game(sf::RenderWindow& window, map<string, sf::Texture>& textures, 
     // Assign Mines
     assign_mines(game_board, num_mines, rows, cols);
     set_adjacent_mines(game_board, rows, cols);
-    // Draw Board
-    draw_current_board(window, textures, rows, cols, game_board, debug_mode, win);
-    draw_counter(window, game_board, textures, num_flags, num_mines, cols);
-    draw_buttons(window, textures, game_board, win, playing, paused);
-    // Display Board
-    window.display();
     while(window.isOpen()) {
         sf::Event event;
+        total_time = clock.getElapsedTime().asSeconds();
+        // Draw Board
+        if(!paused) {
+            window.clear(sf::Color::White);
+            draw_current_board(window, textures, rows, cols, game_board, debug_mode, win);
+            draw_counter(window, game_board, textures, num_flags, num_mines, cols);
+            draw_buttons(window, textures, game_board, win, playing, paused);
+            draw_timer(window, textures, game_board, playing, paused, total_time);
+            // Display Board
+            window.display();
+        }
         while (window.pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::Closed: {
@@ -542,9 +561,13 @@ void display_game(sf::RenderWindow& window, map<string, sf::Texture>& textures, 
                             display_pause(window, textures, game_board, rows, cols);
                             draw_buttons(window, textures, game_board, win, playing, paused);
                             draw_counter(window, game_board, textures, num_flags, num_mines, cols);
+                            draw_timer(window, textures, game_board, playing, paused, total_time);
                             window.display();
                             if(display_leaderboard(rows, cols, font, win, clock.getElapsedTime().asSeconds(), player_name)) {
-                                paused = false;
+                                if(!paused) {
+                                    paused = false;
+                                }
+
                             }
                         }
                     }
@@ -557,6 +580,7 @@ void display_game(sf::RenderWindow& window, map<string, sf::Texture>& textures, 
                     }
                     draw_buttons(window, textures, game_board, win, playing, paused);
                     draw_counter(window, game_board, textures, num_flags, num_mines, cols);
+                    draw_timer(window, textures, game_board, playing, paused, total_time);
                     window.display();
                     if(win && count==0){
                         display_leaderboard(rows, cols, font, win, clock.getElapsedTime().asSeconds(), player_name);

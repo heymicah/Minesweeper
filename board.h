@@ -91,6 +91,7 @@ class board {
     vector<vector<tile*>> game_board;
     map<string, button*> button_map;
     vector<digit*> counter;
+    vector<digit*> timer;
 public:
     board(int rows, int cols) {
         // Tile Board
@@ -123,9 +124,19 @@ public:
         // Counter
         for(int i = 0; i < 3; i++) {
             digit *temp_digit = new digit;
-//            temp_digit->digit_sprite.setPosition(32*(rows+0.5)+16, 33*i);
             temp_digit->digit_sprite.setPosition(21*i+42, (cols + 0.5) * 32 + 16);
             counter.push_back(temp_digit);
+        }
+        // Timer
+        for(int i = 0; i < 4; i++) {
+            digit *temp_digit = new digit;
+            if(i <= 1) {
+                temp_digit->digit_sprite.setPosition(21*i+rows*32-97, (cols + 0.5) * 32 + 16);
+            }
+            else {
+                temp_digit->digit_sprite.setPosition(21*i+rows*32-95, (cols + 0.5) * 32 + 16);
+            }
+            timer.push_back(temp_digit);
         }
     }
     vector<vector<tile*>> get_board() {
@@ -136,5 +147,8 @@ public:
     }
     vector<digit*> get_counter() {
         return counter;
+    }
+    vector<digit*> get_timer() {
+        return timer;
     }
 };
